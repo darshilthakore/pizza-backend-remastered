@@ -34,7 +34,7 @@ class CustomAuthToken(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id': user.pk,
-            'email': user.email
+            'username': user.username,
         })
 
 
@@ -42,4 +42,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('myapi.urls')),
     path('auth/', CustomAuthToken.as_view()),
+]
+
+urlpatterns += [
+    path('api-auth/', include('rest_framework.urls')),
 ]

@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from django.contrib.auth.models import User
 
 
@@ -18,6 +18,21 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+class ToppingViewSet(viewsets.ModelViewSet):
+    queryset = Topping.objects.all()
+    serializer_class = ToppingSerializer
+
+# class CartSerializer(viewsets.ModelViewSet):
+#     queryset = Cart.objects.filter(user = request.user)
+#     serializer_class = CartSerializer
+
+
+
+# To do
+# class OrderViewSet
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

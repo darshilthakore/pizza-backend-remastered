@@ -16,7 +16,7 @@ class ToppingSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['name', 'category', 'price_small', 'price_large']
+        fields = ['id', 'name', 'category', 'price_small', 'price_large']
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
