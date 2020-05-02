@@ -7,6 +7,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'categories', views.CategoryViewSet)
 router.register(r'items', views.ItemViewSet)
+router.register(r'toppings', views.ToppingViewSet)
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
