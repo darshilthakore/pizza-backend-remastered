@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Category, Item, Cart, Topping, Order
+from .models import Category, Item, Cart, CartItem, Topping, Order
 
 
 def order_confirmation(modeladmin, request, queryset):

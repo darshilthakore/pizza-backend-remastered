@@ -24,6 +24,13 @@ class ToppingViewSet(viewsets.ModelViewSet):
     queryset = Topping.objects.all()
     serializer_class = ToppingSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
+
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+
 # class CartSerializer(viewsets.ModelViewSet):
 #     queryset = Cart.objects.filter(user = request.user)
 #     serializer_class = CartSerializer

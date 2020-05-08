@@ -26,13 +26,26 @@ class Item(models.Model):
 
 class Cart(models.Model):
 	user = models.CharField(max_length=64)
-	item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="cartitem")
-	topping = models.ManyToManyField(Topping, blank=True, related_name="carttopping")
-	base_price = models.FloatField(default=0)
+	# cartitem = models.ManyToManyField(CartItem, related_name="cartitem")
 	grand_total = models.FloatField(default=0)
 
 	def __str__(self):
-		return f"Cart | {self.user} | {self.item.name}"
+		return f"Cart | {self.user}"
+
+
+
+class CartItem(models.Model):
+	name = models.CharField(max_length=64)
+	cart = models.ForeignKey(Cart, blank=True, related_name="cartitems", on_delete=models.CASCADE)
+	baseprice = models.FloatField(default=0)
+	topping = models.ManyToManyField(Topping, blank=True, related_name="carttopping")
+	extraprice = models.FloatField(default=0)
+	quantity = models.IntegerField(default=1)
+	total = models.FloatField(default=0)
+
+	def __str__(self):
+		return f"CartItem | {self.name}"
+
 
 
 class Order(models.Model):
