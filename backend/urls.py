@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework.authtoken.views import obtain_auth_token
-
+from myapi.models import Cart
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -31,10 +31,12 @@ class CustomAuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
+        cart, created = Cart.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
             'user_id': user.pk,
             'username': user.username,
+            'cart': cart.id,
         })
 
 

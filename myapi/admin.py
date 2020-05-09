@@ -16,5 +16,6 @@ class OrderAdmin(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(Item)
 admin.site.register(Cart)
+admin.site.register(CartItem)
 admin.site.register(Topping)
 admin.site.register(Order, OrderAdmin)

@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from django.contrib.auth.models import User
 
 
-from .serializers import CategorySerializer, ToppingSerializer, ItemSerializer, CartSerializer, OrderSerializer, UserSerializer
-from .models import Category, Item, Cart, Topping, Order
+from .serializers import CategorySerializer, ToppingSerializer, ItemSerializer, CartSerializer, OrderSerializer, UserSerializer, CartItemSerializer
+from .models import Category, Item, Cart, Topping, Order, CartItem
 # Create your views here.
 
 
@@ -30,6 +30,40 @@ class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
+    def update(self, request, pk=None):
+        cart = Cart.objects.get(id=pk)
+        # serializer = CartSerializer(cart)
+        toppings = request.data['toppings']
+        # topping_serialized = ToppingSerializer(toppings, many=True)
+        cartitem = CartItem.objects.create(cart=cart)
+        cartitem.name = request.data['name']
+        cartitem.baseprice = request.data['baseprice']
+        # cartitem.topping.add(topping_serialized.data)
+        cartitem.extraprice = request.data['extraprice']
+        cartitem.quantity = request.data['quantity']
+        cartitem.total = request.data['total']
+        cartitem.save()
+
+        for t in toppings:
+            topping = Topping.objects.get(pk=t['id'])
+            print(f"topping {topping}")
+            cartitem.topping.add(topping)
+
+        cart.grand_total += cartitem.total
+
+        topping_serialized = ToppingSerializer(cartitem.topping)
+
+        serializer = CartItemSerializer(cartitem)
+        # cartitem = CartItem.objects.create(name=request.data['name'],baseprice=request.data["baseprice"])
+        # serial = CartItemSerializer(cartitem)
+        return Response(serializer.data)
+
+    
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
 # class CartSerializer(viewsets.ModelViewSet):
 #     queryset = Cart.objects.filter(user = request.user)

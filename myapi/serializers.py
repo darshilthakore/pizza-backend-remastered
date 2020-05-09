@@ -20,6 +20,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+    topping = ToppingSerializer(many=True)
     class Meta:
         model = CartItem
         fields = ['id', 'name', 'baseprice', 'topping', 'extraprice', 'quantity', 'total']
@@ -32,12 +33,31 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'cartitems', 'grand_total']
 
 
-    def create(self, validated_data):
-        cartitems_data = validated_data.pop('cartitems')
-        cart = Cart.objects.create(**validated_data)
-        for cartitem_data in cartitems_data:
-            CartItem.objects.create(cart=cart, **cartitem_data)
-        return cart
+    # def create(self, validated_data):
+    #     cartitems_data = validated_data.pop('cartitems')
+    #     print(cartitems_data)
+    #     cart = Cart.objects.create(**validated_data)
+    #     for cartitem_data in cartitems_data:
+    #         CartItem.objects.create(cart=cart, **cartitem_data)
+    #     return cart
+
+
+    # def update(self, instance, validated_data):
+    #     cartitem_data = validated_data.pop('cartitems')
+    #     cartitem = instance.cartitem
+
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.baseprice = validated_data.get('baseprice', instance.baseprice)
+    #     instance.topping = validated_data.get('topping', instance.topping)
+    #     instance.extraprice = validated_data.get('extraprice', instance.extraprice)
+    #     instance.quantity = validated_data.get('quantity', instance.quantity)
+    #     instance.total = validated_data.get('name', instance.total)
+
+    #     instance.save()
+
+    #     cartitem.save()
+
+    #     return instance
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -48,11 +68,11 @@ class OrderSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'username', 'password', 'email']
+        fields = ['id', 'first_name', 'last_name', 'username', 'password', 'email', 'cart']
         extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         Token.objects.create(user=user)
-        Cart.objects.create(user=user.username)
+        Cart.objects.create(user=user)
         return user
