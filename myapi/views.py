@@ -49,7 +49,9 @@ class CartViewSet(viewsets.ModelViewSet):
             print(f"topping {topping}")
             cartitem.topping.add(topping)
 
+        
         cart.grand_total += cartitem.total
+        cart.save()
 
         topping_serialized = ToppingSerializer(cartitem.topping)
 
@@ -57,6 +59,41 @@ class CartViewSet(viewsets.ModelViewSet):
         # cartitem = CartItem.objects.create(name=request.data['name'],baseprice=request.data["baseprice"])
         # serial = CartItemSerializer(cartitem)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['put'])
+    def deletequantity(self, request, pk=None):
+        print(request.data)
+        cart = Cart.objects.get(id=pk)
+        cartitem = CartItem.objects.get(id=request.data)
+        if (cartitem.quantity <= 1):
+            cart.grand_total -= (cartitem.baseprice + cartitem.extraprice)
+            cart.save()
+            cartitem.delete()
+            return Response(None)
+        cartitem.quantity -= 1
+        cartitem.total = cartitem.total - (cartitem.baseprice + cartitem.extraprice)
+        print(cartitem.quantity)
+        cart.grand_total -= (cartitem.baseprice + cartitem.extraprice)
+        
+        cartitem.save()
+        cart.save()
+        return Response(None)
+
+    @action(detail=True, methods=['put'])
+    def addquantity(self, request, pk=None):
+        print(request.data)
+        cart = Cart.objects.get(id=pk)
+        cartitem = CartItem.objects.get(id=request.data)
+        cartitem.quantity += 1
+
+        cartitem.total = cartitem.total + (cartitem.baseprice + cartitem.extraprice)
+        print(cartitem.quantity) 
+        cart.grand_total += (cartitem.baseprice + cartitem.extraprice)
+        cart.save()
+        
+        cartitem.save()
+
+        return Response(None)   
 
     
 
