@@ -72,10 +72,11 @@ class CartViewSet(viewsets.ModelViewSet):
             return Response(None)
         cartitem.quantity -= 1
         cartitem.total = cartitem.total - (cartitem.baseprice + cartitem.extraprice)
+        cartitem.save()
         print(cartitem.quantity)
         cart.grand_total -= (cartitem.baseprice + cartitem.extraprice)
         
-        cartitem.save()
+        
         cart.save()
         return Response(None)
 
