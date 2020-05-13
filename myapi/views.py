@@ -66,16 +66,22 @@ class CartViewSet(viewsets.ModelViewSet):
         cart = Cart.objects.get(id=pk)
         cartitem = CartItem.objects.get(id=request.data)
         if (cartitem.quantity <= 1):
-            cart.grand_total -= (cartitem.baseprice + cartitem.extraprice)
-            cart.save()
             cartitem.delete()
+            cart.grand_total = 0
+            for item in cart.cartitems.all():
+                cart.grand_total += item.total
+
+            cart.save()
+
             return Response(None)
         cartitem.quantity -= 1
-        cartitem.total = cartitem.total - (cartitem.baseprice + cartitem.extraprice)
+        cartitem.total = (cartitem.baseprice + cartitem.extraprice)*cartitem.quantity
         cartitem.save()
         print(cartitem.quantity)
-        cart.grand_total -= (cartitem.baseprice + cartitem.extraprice)
-        
+        cart.grand_total = 0
+        for item in cart.cartitems.all():
+            cart.grand_total += item.total
+
         
         cart.save()
         return Response(None)
@@ -87,9 +93,14 @@ class CartViewSet(viewsets.ModelViewSet):
         cartitem = CartItem.objects.get(id=request.data)
         cartitem.quantity += 1
 
-        cartitem.total = cartitem.total + (cartitem.baseprice + cartitem.extraprice)
+        cartitem.total = (cartitem.baseprice + cartitem.extraprice)*(cartitem.quantity)
         print(cartitem.quantity) 
-        cart.grand_total += (cartitem.baseprice + cartitem.extraprice)
+
+        cart.grand_total = 0
+        for item in cart.cartitems.all():
+            cart.grand_total += item.total
+
+        # cart.grand_total += (cartitem.baseprice + cartitem.extraprice)
         cart.save()
         
         cartitem.save()
