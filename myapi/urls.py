@@ -1,5 +1,6 @@
 from django.urls import path
 from rest_framework import routers
+from django.views.decorators.csrf import csrf_exempt
 from django.conf.urls import include
 
 from . import views
@@ -13,6 +14,7 @@ router.register(r'carts', views.CartViewSet)
 # router.register(r'cartitems', views.CartItemViewSet)
 
 urlpatterns = [
+    path('checkout/', csrf_exempt(views.checkout), name='checkout'),
     path('', include(router.urls)),
 ]
 

@@ -32,6 +32,7 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         cart, created = Cart.objects.get_or_create(user=user)
+        print(f"cart id is : {cart.id}")
         return Response({
             'token': token.key,
             'user_id': user.pk,

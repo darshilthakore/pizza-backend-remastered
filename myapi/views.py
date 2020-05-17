@@ -2,9 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication
+from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from django.contrib.auth.models import User
-
+import stripe
+stripe.api_key = "sk_test_BxiB7UMirS3oOu638rkFU01z00flaseLYK"
 
 from .serializers import CategorySerializer, ToppingSerializer, ItemSerializer, CartSerializer, OrderSerializer, UserSerializer, CartItemSerializer
 from .models import Category, Item, Cart, Topping, Order, CartItem
@@ -117,6 +119,28 @@ class CartItemViewSet(viewsets.ModelViewSet):
 # class CartSerializer(viewsets.ModelViewSet):
 #     queryset = Cart.objects.filter(user = request.user)
 #     serializer_class = CartSerializer
+
+
+def checkout(request):
+    if request.method == 'POST':
+        print("inside checkout req")
+        chk_ses = stripe.checkout.Session.create(
+            success_url = 'http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url = 'http://localhost:4200/checkout',
+            payment_method_types = ['card'],
+            line_items = [
+                {
+                    'name': 'test',
+                    'quantity': 1,
+                    'currency': 'usd',
+                    'amount': 120,
+                }
+            ],
+            mode = 'payment',
+        )
+
+        print(f"chk ses is : {chk_ses}")
+        return JsonResponse(chk_ses)
 
 
 
