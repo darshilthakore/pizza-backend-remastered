@@ -107,7 +107,57 @@ class CartViewSet(viewsets.ModelViewSet):
         
         
 
-        return Response(None)   
+        return Response(None) 
+    
+    @action(detail=True, methods=['post'])
+    def checkout(self, request, pk=None):
+        print(f"reques data is {request.data}")
+        cart = Cart.objects.get(id=pk)
+        items = cart.cartitems.all()
+        
+        line_items = []
+        for item in items:
+            line_items.append({
+                'name': item.name,
+                'quantity': item.quantity,
+                'currency': 'inr',
+                'amount': int(item.total * 100),
+            })
+
+
+        print("inside checkout req")
+        
+        chk_ses = stripe.checkout.Session.create(
+            success_url = 'http://localhost:4200/checkout?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url = 'http://localhost:4200/checkout',
+            payment_method_types = ['card'],
+            line_items = line_items,
+            
+            # shipping_address_collection = request.data['address']
+            # line_items = [
+            #     {
+            #         'name': 'test',
+            #         'quantity': 1,
+            #         'currency': 'inr',
+            #         'amount': 120,
+            #     },
+            #     {
+            #         'name': 'test 2',
+            #         'quantity': 3,
+            #         'currency': 'inr',
+            #         'amount': 120,
+            #     }
+            # ],
+            mode = 'payment',
+            shipping_address_collection = None,
+        )
+
+        print(f"chk ses is : {chk_ses}")
+        return Response(chk_ses)
+
+
+        
+          
 
     
 
@@ -120,27 +170,38 @@ class CartItemViewSet(viewsets.ModelViewSet):
 #     queryset = Cart.objects.filter(user = request.user)
 #     serializer_class = CartSerializer
 
+# class CheckOutViewSet(viewsets.ViewSet):
 
-def checkout(request):
-    if request.method == 'POST':
-        print("inside checkout req")
-        chk_ses = stripe.checkout.Session.create(
-            success_url = 'http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url = 'http://localhost:4200/checkout',
-            payment_method_types = ['card'],
-            line_items = [
-                {
-                    'name': 'test',
-                    'quantity': 1,
-                    'currency': 'usd',
-                    'amount': 120,
-                }
-            ],
-            mode = 'payment',
-        )
+#     @action(detail=True, methods=['post'])
+#     def checkout(self, request):
 
-        print(f"chk ses is : {chk_ses}")
-        return JsonResponse(chk_ses)
+#         print("inside checkout req")
+#         print(f"address is {request.data['address']}")
+#         chk_ses = stripe.checkout.Session.create(
+#             success_url = 'http://localhost:4200/success?session_id={CHECKOUT_SESSION_ID}',
+#             cancel_url = 'http://localhost:4200/checkout',
+#             payment_method_types = ['card'],
+
+#             # shipping_address_collection = request.data['address']
+#             line_items = [
+#                 {
+#                     'name': 'test',
+#                     'quantity': 1,
+#                     'currency': 'usd',
+#                     'amount': 120,
+#                 },
+#                 {
+#                     'name': 'test 2',
+#                     'quantity': 3,
+#                     'currency': 'usd',
+#                     'amount': 120,
+#                 }
+#             ],
+#             mode = 'payment',
+#         )
+
+#         print(f"chk ses is : {chk_ses}")
+#         return Response(chk_ses)
 
 
 

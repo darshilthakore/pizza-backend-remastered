@@ -14,7 +14,7 @@ router.register(r'carts', views.CartViewSet)
 # router.register(r'cartitems', views.CartItemViewSet)
 
 urlpatterns = [
-    path('checkout/', csrf_exempt(views.checkout), name='checkout'),
+    # path('checkout/', csrf_exempt(views.checkout), name='checkout'),
     path('', include(router.urls)),
 ]
 
