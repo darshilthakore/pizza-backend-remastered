@@ -222,3 +222,5 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (AllowAny, )
+
+    
