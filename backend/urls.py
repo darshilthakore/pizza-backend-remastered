@@ -14,17 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.conf.urls import include
 from rest_framework.authtoken.views import obtain_auth_token
 from myapi.models import Cart
+from myapi import views
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
 
 class CustomAuthToken(ObtainAuthToken):
-
+    authentication_classes = (TokenAuthentication, )
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -42,11 +44,15 @@ class CustomAuthToken(ObtainAuthToken):
 
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('api/', include('myapi.urls')),
     path('auth/', CustomAuthToken.as_view()),
+
 ]
 
 urlpatterns += [
     path('api-auth/', include('rest_framework.urls')),
+    re_path(r'^$', views.HomePageView.as_view()),
+    re_path(r'^(?P<url>.*)/$', views.HomePageView.as_view()),
 ]

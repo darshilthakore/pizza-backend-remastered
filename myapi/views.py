@@ -1,3 +1,6 @@
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -12,6 +15,11 @@ from .serializers import CategorySerializer, ToppingSerializer, ItemSerializer, 
 from .models import Category, Item, Cart, Topping, Order, CartItem
 # Create your views here.
 
+
+
+class HomePageView(TemplateView):
+    def get(self, request, **kwargs):
+        return render(request, 'index.html', context=None)
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -212,4 +220,5 @@ class CartItemViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    authentication_classes = (TokenAuthentication, )
     permission_classes = (AllowAny, )
