@@ -136,8 +136,8 @@ class CartViewSet(viewsets.ModelViewSet):
         print("inside checkout req")
         
         chk_ses = stripe.checkout.Session.create(
-            success_url = 'http://localhost:4200/checkout?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url = 'http://localhost:4200/checkout',
+            success_url = 'https://pizza-remastered.herokuapp.com/',
+            cancel_url = 'https://pizza-remastered.herokuapp.com/checkout',
             payment_method_types = ['card'],
             line_items = line_items,
             
